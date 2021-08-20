@@ -1,0 +1,217 @@
+basePath: /api/v1
+definitions:
+  cluster.Cluster:
+    properties:
+      config:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+    type: object
+  handlers.clusterListResponse:
+    properties:
+      clusters:
+        items:
+          $ref: '#/definitions/cluster.Cluster'
+        type: array
+      total:
+        type: integer
+    type: object
+  handlers.createCluster:
+    properties:
+      config:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+    type: object
+  handlers.updateCluster:
+    properties:
+      config:
+        type: string
+      description:
+        type: string
+    type: object
+info:
+  contact:
+    email: 46617237@qq.com
+    name: API Support
+  description: This is a swagger for KubeLemon
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: https://github.com/majian159/kubelemon
+  title: KubeLemon API
+  version: "1.0"
+paths:
+  /namespaces/{namespace}/clusters:
+    get:
+      operationId: listClusters
+      parameters:
+      - description: Namespace name
+        in: path
+        name: namespace
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handlers.clusterListResponse'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+        default:
+          description: ""
+          schema:
+            type: string
+      tags:
+      - clusters
+    post:
+      operationId: postCluster
+      parameters:
+      - description: Namespace name
+        in: path
+        name: namespace
+        required: true
+        type: string
+      - description: Create cluster
+        in: body
+        name: cluster
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.createCluster'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/cluster.Cluster'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+        default:
+          description: ""
+          schema:
+            type: string
+      summary: Create cluster
+      tags:
+      - clusters
+  /namespaces/{namespace}/clusters/{cluster}:
+    delete:
+      operationId: deleteCluster
+      parameters:
+      - description: Namespace name
+        in: path
+        name: namespace
+        required: true
+        type: string
+      - description: Cluster name
+        in: path
+        name: cluster
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Delete a cluster
+      tags:
+      - clusters
+    get:
+      operationId: getCluster
+      parameters:
+      - description: Namespace name
+        in: path
+        name: namespace
+        required: true
+        type: string
+      - description: Cluster name
+        in: path
+        name: cluster
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/cluster.Cluster'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+        default:
+          description: ""
+          schema:
+            type: string
+      summary: Get cluster
+      tags:
+      - clusters
+    patch:
+      operationId: patchCluster
+      parameters:
+      - description: Namespace name
+        in: path
+        name: namespace
+        required: true
+        type: string
+      - description: Cluster name
+        in: path
+        name: cluster
+        required: true
+        type: string
+      - description: Patch cluster
+        in: body
+        name: cluster
+        required: true
+        schema:
+          $ref: '#/definitions/handlers.updateCluster'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/cluster.Cluster'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+        default:
+          description: ""
+          schema:
+            type: string
+      summary: Update cluster
+      tags:
+      - clusters
+swagger: "2.0"
