@@ -154,8 +154,6 @@ func (c *clusterService) Update(namespace string, cluster *Cluster) (*Cluster, e
 
 	if currentCluster.Description != cluster.Description {
 		payloadBytes := createReplacePatch(fmt.Sprintf("/metadata/annotations/%s", escapeJsonPatch(descriptionField)), cluster.Description)
-
-		fmt.Println(string(payloadBytes))
 		cr, err := c.velaClient.CoreV1beta1().
 			Clusters(namespace).
 			Patch(context.Background(), cluster.Name, types.JSONPatchType, payloadBytes, metav1.PatchOptions{})
@@ -202,10 +200,12 @@ func (c *clusterService) listConfigSecrets(namespace string, clusterNames []stri
 func convertCluster(cluster *v1beta1.Cluster, config string) *Cluster {
 	annotations := cluster.ObjectMeta.Annotations
 	description := annotations[descriptionField]
+
 	return &Cluster{
 		Name:        cluster.Name,
 		Description: description,
 		Config:      config,
+		CreatedTime: cluster.ObjectMeta.CreationTimestamp.UTC(),
 	}
 }
 

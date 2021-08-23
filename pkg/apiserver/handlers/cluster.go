@@ -2,6 +2,9 @@ package handlers
 
 import (
 	"net/http"
+	"strings"
+
+	"github.com/majian159/kubelemon/pkg/apiserver/types"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/majian159/kubelemon/pkg/apiserver/appcontext"
@@ -9,18 +12,18 @@ import (
 	"github.com/majian159/kubelemon/pkg/domain/cluster"
 )
 
-type clusterListResponse struct {
-	Clusters []*cluster.Cluster `json:"clusters,omitempty"`
-	Total    int                `json:"total,omitempty"`
+type ClusterListResponse struct {
+	Items []*cluster.Cluster `json:"items,omitempty"`
+	Total int                `json:"total"`
 }
 
-type createCluster struct {
+type CreateClusterRequest struct {
 	Name        string `json:"name,omitempty"`
 	Config      string `json:"config,omitempty"`
 	Description string `json:"description,omitempty"`
 }
 
-type updateCluster struct {
+type UpdateClusterRequest struct {
 	Config      string `json:"config,omitempty"`
 	Description string `json:"description,omitempty"`
 }
@@ -29,28 +32,37 @@ type updateCluster struct {
 // @Tags clusters
 // @ID listClusters
 // @Param namespace path string true "Namespace name"
-// @Success 200 {object} clusterListResponse
+// @Param query query types.ListQuery false "query"
+// @Success 200 {object} ClusterListResponse
 // @Failure 404 {object} string
 // @Failure 500 {object} string
-// @Failure default {object} string
+// @Response default {object} ClusterListResponse
 // @Router /namespaces/{namespace}/clusters [get]
 func ListCluster(c *fiber.Ctx) error {
 	namespace := c.Params("namespace")
-	query := domain.NewEmptyQuery()
-	if err := c.QueryParser(query); err != nil {
+
+	q := new(types.ListQuery)
+	if err := c.QueryParser(q); err != nil {
 		return err
 	}
 
 	service := getService(c)
-	list, total, err := service.List(namespace, query)
-
+	list, _, err := service.List(namespace, q.CreateQuery())
 	if err != nil {
 		return err
 	}
 
-	return c.JSON(&clusterListResponse{
-		Clusters: list,
-		Total:    total,
+	total, err := q.CreateFilterExecutor(list, func(keywords string, i interface{}) bool {
+		cl := i.(*cluster.Cluster)
+		return strings.Contains(cl.Name, keywords) || strings.Contains(cl.Description, q.Keywords)
+	}).Exec(&list)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(&ClusterListResponse{
+		Items: list,
+		Total: total,
 	})
 }
 
@@ -63,7 +75,7 @@ func ListCluster(c *fiber.Ctx) error {
 // @Success 200 {object} cluster.Cluster
 // @Failure 404 {object} string
 // @Failure 500 {object} string
-// @Failure default {object} string
+// @Response default {object} cluster.Cluster
 // @Router /namespaces/{namespace}/clusters/{cluster} [get]
 func GetCluster(c *fiber.Ctx) error {
 	namespace := c.Params("namespace")
@@ -86,15 +98,15 @@ func GetCluster(c *fiber.Ctx) error {
 // @Tags clusters
 // @ID postCluster
 // @Param namespace path string true "Namespace name"
-// @Param cluster body createCluster true "Create cluster"
+// @Param cluster body CreateClusterRequest true "Create cluster"
 // @Success 200 {object} cluster.Cluster
 // @Failure 404 {object} string
 // @Failure 500 {object} string
-// @Failure default {object} string
+// @Response default {object} cluster.Cluster
 // @Router /namespaces/{namespace}/clusters [post]
 func CreateCluster(c *fiber.Ctx) error {
 	namespace := c.Params("namespace")
-	m := new(createCluster)
+	m := new(CreateClusterRequest)
 	if err := c.BodyParser(m); err != nil {
 		return err
 	}
@@ -120,16 +132,16 @@ func CreateCluster(c *fiber.Ctx) error {
 // @ID patchCluster
 // @Param namespace path string true "Namespace name"
 // @Param cluster path string true "Cluster name"
-// @Param cluster body updateCluster true "Patch cluster"
+// @Param cluster body UpdateClusterRequest true "Patch cluster"
 // @Success 200 {object} cluster.Cluster
 // @Failure 404 {object} string
 // @Failure 500 {object} string
-// @Failure default {object} string
+// @Response default {object} cluster.Cluster
 // @Router /namespaces/{namespace}/clusters/{cluster} [patch]
 func UpdateCluster(c *fiber.Ctx) error {
 	namespace := c.Params("namespace")
 	name := c.Params("name")
-	m := new(updateCluster)
+	m := new(UpdateClusterRequest)
 	if err := c.BodyParser(m); err != nil {
 		return err
 	}

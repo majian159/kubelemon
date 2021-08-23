@@ -4,21 +4,23 @@ definitions:
     properties:
       config:
         type: string
+      createdTime:
+        type: string
       description:
         type: string
       name:
         type: string
     type: object
-  handlers.clusterListResponse:
+  handlers.ClusterListResponse:
     properties:
-      clusters:
+      items:
         items:
           $ref: '#/definitions/cluster.Cluster'
         type: array
       total:
         type: integer
     type: object
-  handlers.createCluster:
+  handlers.CreateClusterRequest:
     properties:
       config:
         type: string
@@ -27,7 +29,7 @@ definitions:
       name:
         type: string
     type: object
-  handlers.updateCluster:
+  handlers.UpdateClusterRequest:
     properties:
       config:
         type: string
@@ -55,11 +57,25 @@ paths:
         name: namespace
         required: true
         type: string
+      - in: query
+        name: keywords
+        type: string
+      - in: query
+        name: limit
+        type: integer
+      - in: query
+        name: offset
+        type: integer
+      - in: query
+        items:
+          type: string
+        name: sortBy
+        type: array
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handlers.clusterListResponse'
+            $ref: '#/definitions/handlers.ClusterListResponse'
         "404":
           description: Not Found
           schema:
@@ -71,7 +87,7 @@ paths:
         default:
           description: ""
           schema:
-            type: string
+            $ref: '#/definitions/handlers.ClusterListResponse'
       tags:
       - clusters
     post:
@@ -87,7 +103,7 @@ paths:
         name: cluster
         required: true
         schema:
-          $ref: '#/definitions/handlers.createCluster'
+          $ref: '#/definitions/handlers.CreateClusterRequest'
       responses:
         "200":
           description: OK
@@ -104,7 +120,7 @@ paths:
         default:
           description: ""
           schema:
-            type: string
+            $ref: '#/definitions/cluster.Cluster'
       summary: Create cluster
       tags:
       - clusters
@@ -171,7 +187,7 @@ paths:
         default:
           description: ""
           schema:
-            type: string
+            $ref: '#/definitions/cluster.Cluster'
       summary: Get cluster
       tags:
       - clusters
@@ -193,7 +209,7 @@ paths:
         name: cluster
         required: true
         schema:
-          $ref: '#/definitions/handlers.updateCluster'
+          $ref: '#/definitions/handlers.UpdateClusterRequest'
       responses:
         "200":
           description: OK
@@ -210,7 +226,7 @@ paths:
         default:
           description: ""
           schema:
-            type: string
+            $ref: '#/definitions/cluster.Cluster'
       summary: Update cluster
       tags:
       - clusters

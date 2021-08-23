@@ -44,13 +44,36 @@ var doc = `{
                         "name": "namespace",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "keywords",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handlers.clusterListResponse"
+                            "$ref": "#/definitions/handlers.ClusterListResponse"
                         }
                     },
                     "404": {
@@ -68,7 +91,7 @@ var doc = `{
                     "default": {
                         "description": "",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/handlers.ClusterListResponse"
                         }
                     }
                 }
@@ -93,7 +116,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handlers.createCluster"
+                            "$ref": "#/definitions/handlers.CreateClusterRequest"
                         }
                     }
                 ],
@@ -119,7 +142,7 @@ var doc = `{
                     "default": {
                         "description": "",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/cluster.Cluster"
                         }
                     }
                 }
@@ -170,7 +193,7 @@ var doc = `{
                     "default": {
                         "description": "",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/cluster.Cluster"
                         }
                     }
                 }
@@ -251,7 +274,7 @@ var doc = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handlers.updateCluster"
+                            "$ref": "#/definitions/handlers.UpdateClusterRequest"
                         }
                     }
                 ],
@@ -277,7 +300,7 @@ var doc = `{
                     "default": {
                         "description": "",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/cluster.Cluster"
                         }
                     }
                 }
@@ -291,6 +314,9 @@ var doc = `{
                 "config": {
                     "type": "string"
                 },
+                "createdTime": {
+                    "type": "string"
+                },
                 "description": {
                     "type": "string"
                 },
@@ -299,10 +325,10 @@ var doc = `{
                 }
             }
         },
-        "handlers.clusterListResponse": {
+        "handlers.ClusterListResponse": {
             "type": "object",
             "properties": {
-                "clusters": {
+                "items": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/cluster.Cluster"
@@ -313,7 +339,7 @@ var doc = `{
                 }
             }
         },
-        "handlers.createCluster": {
+        "handlers.CreateClusterRequest": {
             "type": "object",
             "properties": {
                 "config": {
@@ -327,7 +353,7 @@ var doc = `{
                 }
             }
         },
-        "handlers.updateCluster": {
+        "handlers.UpdateClusterRequest": {
             "type": "object",
             "properties": {
                 "config": {

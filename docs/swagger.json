@@ -29,13 +29,36 @@
                         "name": "namespace",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "name": "keywords",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "name": "sortBy",
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handlers.clusterListResponse"
+                            "$ref": "#/definitions/handlers.ClusterListResponse"
                         }
                     },
                     "404": {
@@ -53,7 +76,7 @@
                     "default": {
                         "description": "",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/handlers.ClusterListResponse"
                         }
                     }
                 }
@@ -78,7 +101,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handlers.createCluster"
+                            "$ref": "#/definitions/handlers.CreateClusterRequest"
                         }
                     }
                 ],
@@ -104,7 +127,7 @@
                     "default": {
                         "description": "",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/cluster.Cluster"
                         }
                     }
                 }
@@ -155,7 +178,7 @@
                     "default": {
                         "description": "",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/cluster.Cluster"
                         }
                     }
                 }
@@ -236,7 +259,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handlers.updateCluster"
+                            "$ref": "#/definitions/handlers.UpdateClusterRequest"
                         }
                     }
                 ],
@@ -262,7 +285,7 @@
                     "default": {
                         "description": "",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/cluster.Cluster"
                         }
                     }
                 }
@@ -276,6 +299,9 @@
                 "config": {
                     "type": "string"
                 },
+                "createdTime": {
+                    "type": "string"
+                },
                 "description": {
                     "type": "string"
                 },
@@ -284,10 +310,10 @@
                 }
             }
         },
-        "handlers.clusterListResponse": {
+        "handlers.ClusterListResponse": {
             "type": "object",
             "properties": {
-                "clusters": {
+                "items": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/cluster.Cluster"
@@ -298,7 +324,7 @@
                 }
             }
         },
-        "handlers.createCluster": {
+        "handlers.CreateClusterRequest": {
             "type": "object",
             "properties": {
                 "config": {
@@ -312,7 +338,7 @@
                 }
             }
         },
-        "handlers.updateCluster": {
+        "handlers.UpdateClusterRequest": {
             "type": "object",
             "properties": {
                 "config": {

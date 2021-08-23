@@ -1,15 +1,30 @@
 package domain
 
+import "strings"
+
 type Field string
 
+type SortField string
+
+func (r SortField) GetColumn() Field {
+	str := string(r)
+	index := strings.Index(str, "|")
+	if index == -1 {
+		return Field(str)
+	}
+	return Field(str[:index])
+}
+
+func (r SortField) IsAscending() bool {
+	str := string(r)
+	return strings.Contains(str, "|asc")
+}
+
 type Query struct {
-	LabelSelector string `json:"labelSelector,omitempty"`
-
-	Pagination *Pagination `json:"pagination,omitempty"`
-
-	Columns map[Field]string `json:"columns,omitempty"`
-
-	SortBy []Field `json:"sortBy,omitempty"`
+	LabelSelector string      `json:"labelSelector,omitempty"`
+	Pagination    *Pagination `json:"pagination,omitempty"`
+	Columns       []Field     `json:"columns,omitempty"`
+	SortBy        []SortField `json:"sortBy,omitempty"`
 }
 
 type Pagination struct {
@@ -20,15 +35,6 @@ type Pagination struct {
 var NoPagination = &Pagination{
 	Limit:  -1,
 	Offset: 0,
-}
-
-func NewEmptyQuery() *Query {
-	return &Query{
-		Pagination: &Pagination{
-			Limit:  NoPagination.Limit,
-			Offset: NoPagination.Offset,
-		},
-	}
 }
 
 func (p *Pagination) GetPage(total int) (start, end int) {
