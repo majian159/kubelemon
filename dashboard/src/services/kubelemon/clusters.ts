@@ -5,6 +5,11 @@ import { request } from 'umi';
 /** 此处后端没有提供注释 GET /namespaces/${param0}/clusters */
 export async function listClusters(
   params: {
+    // query
+    keywords?: string;
+    limit?: number;
+    offset?: number;
+    sortBy?: string[];
     // path
     /** Namespace name */
     namespace: string;
@@ -12,9 +17,11 @@ export async function listClusters(
   options?: { [key: string]: any },
 ) {
   const { namespace: param0, ...queryParams } = params;
-  return request<string>(`/namespaces/${param0}/clusters`, {
+  return request<API.ClusterListResponse>(`/namespaces/${param0}/clusters`, {
     method: 'GET',
-    params: { ...queryParams },
+    params: {
+      ...queryParams,
+    },
     ...(options || {}),
   });
 }
@@ -26,11 +33,11 @@ export async function postCluster(
     /** Namespace name */
     namespace: string;
   },
-  body: API.createCluster,
+  body: API.CreateClusterRequest,
   options?: { [key: string]: any },
 ) {
   const { namespace: param0, ...queryParams } = params;
-  return request<string>(`/namespaces/${param0}/clusters`, {
+  return request<API.Cluster>(`/namespaces/${param0}/clusters`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -53,7 +60,7 @@ export async function getCluster(
   options?: { [key: string]: any },
 ) {
   const { namespace: param0, cluster: param1, ...queryParams } = params;
-  return request<string>(`/namespaces/${param0}/clusters/${param1}`, {
+  return request<API.Cluster>(`/namespaces/${param0}/clusters/${param1}`, {
     method: 'GET',
     params: { ...queryParams },
     ...(options || {}),
@@ -88,11 +95,11 @@ export async function patchCluster(
     /** Cluster name */
     cluster: string;
   },
-  body: API.updateCluster,
+  body: API.UpdateClusterRequest,
   options?: { [key: string]: any },
 ) {
   const { namespace: param0, cluster: param1, ...queryParams } = params;
-  return request<string>(`/namespaces/${param0}/clusters/${param1}`, {
+  return request<API.Cluster>(`/namespaces/${param0}/clusters/${param1}`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',

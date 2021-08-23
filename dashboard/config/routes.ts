@@ -20,7 +20,19 @@
   },
   {
     path: '/',
-    redirect: '/',
+    redirect: '/clusters',
+  },
+  {
+    name: 'cluster',
+    flatMenu: true,
+    routes: [
+      {
+        name: 'list',
+        path: '/clusters',
+        icon: 'ClusterOutlined',
+        component: './Cluster/List',
+      },
+    ],
   },
   {
     component: './404',
