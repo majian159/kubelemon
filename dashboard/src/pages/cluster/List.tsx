@@ -64,7 +64,6 @@ const Table: React.FC = () => {
                   deleteCluster({ namespace, cluster: cluster as string }),
                 );
                 tasks.forEach(async (t) => await t);
-                onCleanSelected();
                 actionRef.current?.reload();
                 message.success('Delete success!');
               }}
@@ -126,6 +125,11 @@ const Table: React.FC = () => {
       }}
       rowKey="name"
       cardBordered
+      onLoad={() => {
+        if (actionRef.current?.clearSelected) {
+          actionRef.current.clearSelected();
+        }
+      }}
     />
   );
 };

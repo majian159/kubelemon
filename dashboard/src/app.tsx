@@ -79,5 +79,5 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
 };
 
 export const request: RequestConfig = {
-  prefix: '/api/v1',
+  prefix: '/api/v1alpha1',
 };
