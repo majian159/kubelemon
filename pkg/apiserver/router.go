@@ -15,7 +15,7 @@ import (
 // @contact.email 46617237@qq.com
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
-// @BasePath /api/v1
+// @BasePath /api/v1alpha1
 func registerRoute(app *fiber.App) {
 
 	// swagger
@@ -26,7 +26,7 @@ func registerRoute(app *fiber.App) {
 		}))
 	}
 
-	v1Group := app.Group("/api/v1")
+	v1Group := app.Group("/api/v1alpha1")
 	_ = v1Group
 
 	nsGroup := v1Group.Group("/namespaces/:namespace")

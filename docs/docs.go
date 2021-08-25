@@ -380,7 +380,7 @@ type swaggerInfo struct {
 var SwaggerInfo = swaggerInfo{
 	Version:     "1.0",
 	Host:        "",
-	BasePath:    "/api/v1",
+	BasePath:    "/api/v1alpha1",
 	Schemes:     []string{},
 	Title:       "KubeLemon API",
 	Description: "This is a swagger for KubeLemon",

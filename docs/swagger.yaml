@@ -1,4 +1,4 @@
-basePath: /api/v1
+basePath: /api/v1alpha1
 definitions:
   cluster.Cluster:
     properties:

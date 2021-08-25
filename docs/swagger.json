@@ -14,7 +14,7 @@
         },
         "version": "1.0"
     },
-    "basePath": "/api/v1",
+    "basePath": "/api/v1alpha1",
     "paths": {
         "/namespaces/{namespace}/clusters": {
             "get": {
