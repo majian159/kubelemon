@@ -73,8 +73,8 @@ const ClusterForm: React.FC<{
       }
       submitter={{
         searchConfig: {
-          resetText: <FormattedMessage id="component.form.ok" defaultMessage="OK" />,
-          submitText: <FormattedMessage id="component.form.cancel" defaultMessage="Cancel" />,
+          submitText: <FormattedMessage id="component.form.ok" defaultMessage="OK" />,
+          resetText: <FormattedMessage id="component.form.cancel" defaultMessage="Cancel" />,
         },
       }}
       onFinish={(values) => onFinish({ cluster: values, isCreate })}
