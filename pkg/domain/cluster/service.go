@@ -57,18 +57,26 @@ func (c *clusterService) List(namespace string, query *domain.Query) (clusters [
 		return nil, 0, err
 	}
 
-	items := clusterList.Items
-	total = len(items)
+	// ignore deleting
+	lq := linq.From(clusterList.Items).
+		Where(func(i interface{}) bool {
+			return i.(v1beta1.Cluster).ObjectMeta.DeletionTimestamp == nil
+		})
 
-	start, end := query.Pagination.GetPage(total)
-	items = items[start:end]
-
-	if len(items) == 0 {
+	total = lq.Count()
+	if total <= 0 {
 		return []*Cluster{}, 0, nil
 	}
 
+	start, end := query.Pagination.GetPage(total)
+	lq = lq.Skip(start).Take(end)
+
+	if lq.Count() <= 0 {
+		return []*Cluster{}, total, nil
+	}
+
 	var clusterNames []string
-	linq.From(items).Select(func(i interface{}) interface{} {
+	lq.Select(func(i interface{}) interface{} {
 		return i.(v1beta1.Cluster).Name
 	}).ToSlice(&clusterNames)
 
@@ -78,7 +86,7 @@ func (c *clusterService) List(namespace string, query *domain.Query) (clusters [
 	}
 
 	var result []*Cluster
-	linq.From(items).Select(func(c interface{}) interface{} {
+	lq.Select(func(c interface{}) interface{} {
 		cluster := c.(v1beta1.Cluster)
 		secret := secrets[cluster.Name]
 		return convertCluster(&cluster, secret)

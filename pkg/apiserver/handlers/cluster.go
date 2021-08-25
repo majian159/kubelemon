@@ -52,16 +52,17 @@ func ListCluster(c *fiber.Ctx) error {
 		return err
 	}
 
+	var result []*cluster.Cluster
 	total, err := q.CreateFilterExecutor(list, func(keywords string, i interface{}) bool {
 		cl := i.(*cluster.Cluster)
-		return strings.Contains(cl.Name, keywords) || strings.Contains(cl.Description, q.Keywords)
-	}).Exec(&list)
+		return strings.Contains(cl.Name, keywords) || strings.Contains(cl.Description, keywords)
+	}).Exec(&result)
 	if err != nil {
 		return err
 	}
 
 	return c.JSON(&ClusterListResponse{
-		Items: list,
+		Items: result,
 		Total: total,
 	})
 }
