@@ -1,16 +1,16 @@
-import {
-  deleteCluster,
-  listClusters,
-  patchCluster,
-  postCluster,
-} from '@/services/kubelemon/clusters';
-import { PageContainer } from '@ant-design/pro-layout';
-import type { ActionType } from '@ant-design/pro-table';
-import ProTable from '@ant-design/pro-table';
 import { message, Popconfirm, Space } from 'antd';
 import { useRef, useState } from 'react';
 import { FormattedMessage } from 'umi';
+
+import {
+    deleteCluster, listClusters, patchCluster, postCluster, putClusterConfig
+} from '@/services/kubelemon/clusters';
+import { PageContainer } from '@ant-design/pro-layout';
+import ProTable from '@ant-design/pro-table';
+
 import ClusterForm from './components/ClusterForm';
+
+import type { ActionType } from '@ant-design/pro-table';
 
 const Table: React.FC = () => {
   const [editCluster, setEditCluster] = useState<API.Cluster | null>(null);
@@ -26,28 +26,28 @@ const Table: React.FC = () => {
         <ClusterForm
           cluster={editCluster}
           setCluster={setEditCluster}
-          onFinish={async ({ cluster, isCreate }) => {
-            let task: Promise<API.Cluster>;
+          onFinish={async ({ current, config, isCreate }) => {
+            let task: Promise<any>;
 
             if (isCreate) {
-              task = postCluster(
-                { namespace },
-                {
-                  ...cluster,
-                },
-              );
+              await postCluster({ namespace }, current);
+              task = putClusterConfig({ namespace, name: current.name ?? '' }, { config });
             } else {
-              task = patchCluster(
-                { namespace, cluster: cluster.name ?? '' },
+              const patchTask = patchCluster(
+                { namespace, name: current.name ?? '' },
                 {
-                  description: cluster.description,
-                  config: cluster.config,
+                  description: current.description,
                 },
               );
+              const putConfigTask = putClusterConfig(
+                { namespace, name: current.name ?? '' },
+                { config },
+              );
+              task = Promise.all([patchTask, putConfigTask]);
             }
 
             await task;
-            message.success(`${isCreate ? 'Create' : 'Edit'} cluster ${cluster.name} success!`);
+            message.success(`${isCreate ? 'Create' : 'Edit'} cluster ${current.name} success!`);
             actionRef.current?.reload();
             return true;
           }}
@@ -61,7 +61,7 @@ const Table: React.FC = () => {
               title="Are you sure to delete selected clusters?"
               onConfirm={() => {
                 const tasks = selectedRowKeys.map((cluster) =>
-                  deleteCluster({ namespace, cluster: cluster as string }),
+                  deleteCluster({ namespace, name: cluster as string }),
                 );
                 tasks.forEach(async (t) => await t);
                 actionRef.current?.reload();
@@ -78,7 +78,7 @@ const Table: React.FC = () => {
         { title: 'Description', dataIndex: 'description', search: false },
         {
           title: 'Created',
-          dataIndex: 'createdTime',
+          dataIndex: 'creationTime',
           search: false,
           sorter: true,
         },
@@ -95,7 +95,7 @@ const Table: React.FC = () => {
               key="delete"
               title="Are you sure to delete this cluster?"
               onConfirm={async () => {
-                await deleteCluster({ namespace, cluster: record.name as string });
+                await deleteCluster({ namespace, name: record.name as string });
                 actionRef.current?.reload();
                 message.success('Delete success!');
               }}

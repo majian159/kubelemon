@@ -3,25 +3,26 @@
 
 declare namespace API {
   type Cluster = {
-    config?: string;
-    createdTime?: string;
+    creationTime?: string;
     description?: string;
     name?: string;
   };
 
-  type ClusterListResponse = {
+  type Config = {
+    config?: string;
+  };
+
+  type CreateClusterRequest = {
+    description?: string;
+    name?: string;
+  };
+
+  type ListResponse = {
     items?: Cluster[];
     total?: number;
   };
 
-  type CreateClusterRequest = {
-    config?: string;
-    description?: string;
-    name?: string;
-  };
-
   type UpdateClusterRequest = {
-    config?: string;
     description?: string;
   };
 }

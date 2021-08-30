@@ -17,9 +17,12 @@ export async function listClusters(
   options?: { [key: string]: any },
 ) {
   const { namespace: param0, ...queryParams } = params;
-  return request<API.ClusterListResponse>(`/namespaces/${param0}/clusters`, {
+  return request<API.ListResponse>(`/namespaces/${param0}/clusters`, {
     method: 'GET',
     params: {
+      // limit has a default value: 10
+      limit: '10',
+
       ...queryParams,
     },
     ...(options || {}),
@@ -55,11 +58,11 @@ export async function getCluster(
     /** Namespace name */
     namespace: string;
     /** Cluster name */
-    cluster: string;
+    name: string;
   },
   options?: { [key: string]: any },
 ) {
-  const { namespace: param0, cluster: param1, ...queryParams } = params;
+  const { namespace: param0, name: param1, ...queryParams } = params;
   return request<API.Cluster>(`/namespaces/${param0}/clusters/${param1}`, {
     method: 'GET',
     params: { ...queryParams },
@@ -74,11 +77,11 @@ export async function deleteCluster(
     /** Namespace name */
     namespace: string;
     /** Cluster name */
-    cluster: string;
+    name: string;
   },
   options?: { [key: string]: any },
 ) {
-  const { namespace: param0, cluster: param1, ...queryParams } = params;
+  const { namespace: param0, name: param1, ...queryParams } = params;
   return request<any>(`/namespaces/${param0}/clusters/${param1}`, {
     method: 'DELETE',
     params: { ...queryParams },
@@ -93,14 +96,57 @@ export async function patchCluster(
     /** Namespace name */
     namespace: string;
     /** Cluster name */
-    cluster: string;
+    name: string;
   },
   body: API.UpdateClusterRequest,
   options?: { [key: string]: any },
 ) {
-  const { namespace: param0, cluster: param1, ...queryParams } = params;
+  const { namespace: param0, name: param1, ...queryParams } = params;
   return request<API.Cluster>(`/namespaces/${param0}/clusters/${param1}`, {
     method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    params: { ...queryParams },
+    data: body,
+    ...(options || {}),
+  });
+}
+
+/** Get cluster config GET /namespaces/${param0}/clusters/${param1}/config */
+export async function getClusterConfig(
+  params: {
+    // path
+    /** Namespace name */
+    namespace: string;
+    /** Cluster name */
+    name: string;
+  },
+  options?: { [key: string]: any },
+) {
+  const { namespace: param0, name: param1, ...queryParams } = params;
+  return request<API.Config>(`/namespaces/${param0}/clusters/${param1}/config`, {
+    method: 'GET',
+    params: { ...queryParams },
+    ...(options || {}),
+  });
+}
+
+/** Put cluster config PUT /namespaces/${param0}/clusters/${param1}/config */
+export async function putClusterConfig(
+  params: {
+    // path
+    /** Namespace name */
+    namespace: string;
+    /** Cluster name */
+    name: string;
+  },
+  body: API.Config,
+  options?: { [key: string]: any },
+) {
+  const { namespace: param0, name: param1, ...queryParams } = params;
+  return request<string>(`/namespaces/${param0}/clusters/${param1}/config`, {
+    method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
     },

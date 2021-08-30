@@ -1,9 +1,12 @@
-import { ClusterOutlined, PlusOutlined } from '@ant-design/icons';
-import { DrawerForm, ProFormText, ProFormTextArea } from '@ant-design/pro-form';
-import type { FormInstance } from 'antd';
 import { Button, Space } from 'antd';
 import React, { useCallback, useEffect, useRef } from 'react';
 import { FormattedMessage } from 'umi';
+
+import { getClusterConfig } from '@/services/kubelemon/clusters';
+import { ClusterOutlined, PlusOutlined } from '@ant-design/icons';
+import { DrawerForm, ProFormText, ProFormTextArea } from '@ant-design/pro-form';
+
+import type { FormInstance } from 'antd';
 
 const FormContent: React.FC<{ isCreate: boolean }> = ({ isCreate }) => {
   return (
@@ -30,7 +33,7 @@ const FormContent: React.FC<{ isCreate: boolean }> = ({ isCreate }) => {
 const ClusterForm: React.FC<{
   cluster: API.Cluster | null;
   setCluster: (cluster: API.Cluster | null) => void;
-  onFinish: (p: { cluster: API.Cluster; isCreate: boolean }) => Promise<boolean>;
+  onFinish: (p: { current: API.Cluster; config: string; isCreate: boolean }) => Promise<boolean>;
 }> = ({ cluster, setCluster, onFinish }) => {
   const isCreate = cluster?.name == null;
   const formRef = useRef<FormInstance>();
@@ -38,6 +41,17 @@ const ClusterForm: React.FC<{
   useEffect(() => {
     if (cluster == null) {
       return;
+    }
+
+    if (cluster.name != null) {
+      getClusterConfig({ namespace: 'default', name: cluster?.name ?? '' }).then((resp) => {
+        formRef.current?.setFields([
+          {
+            name: 'config',
+            value: resp.config,
+          },
+        ]);
+      });
     }
 
     formRef.current?.resetFields();
@@ -49,7 +63,7 @@ const ClusterForm: React.FC<{
   const onCreate = useCallback(() => setCluster({}), [setCluster]);
 
   return (
-    <DrawerForm<API.Cluster>
+    <DrawerForm<API.Cluster & { config: string }>
       formRef={formRef}
       title={
         <>
@@ -77,7 +91,16 @@ const ClusterForm: React.FC<{
           resetText: <FormattedMessage id="component.form.cancel" defaultMessage="Cancel" />,
         },
       }}
-      onFinish={(values) => onFinish({ cluster: values, isCreate })}
+      onFinish={(values) =>
+        onFinish({
+          current: {
+            name: values.name,
+            description: values.description,
+          },
+          config: values.config,
+          isCreate,
+        })
+      }
     >
       <FormContent isCreate={isCreate} />
     </DrawerForm>
