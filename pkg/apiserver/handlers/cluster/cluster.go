@@ -2,9 +2,12 @@ package cluster
 
 import (
 	"context"
+	"fmt"
 	"github.com/ahmetb/go-linq/v3"
+	"github.com/majian159/kubelemon/pkg/util"
 	"github.com/oam-dev/kubevela-core-api/apis/core.oam.dev/v1beta1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/types"
 	"net/http"
 	"strings"
 	"time"
@@ -200,17 +203,14 @@ func Update(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	clusters := appcontext.Get(ctx).GetVelaClient().CoreV1beta1().Clusters(namespace)
-	cl, err := clusters.Update(context.Background(),
-		convertVela(namespace, &Cluster{
-			Name:        name,
-			Description: m.Description,
-		}), v1.UpdateOptions{})
+	payloadBytes := util.CreateReplacePatch(fmt.Sprintf("/metadata/annotations/%s", util.EscapeJsonPatch(atypes.DescriptionField)), m.Description)
+	cr, err := appcontext.Get(ctx).GetVelaClient().CoreV1beta1().
+		Clusters(namespace).
+		Patch(context.Background(), name, types.JSONPatchType, payloadBytes, v1.PatchOptions{})
 	if err != nil {
 		return err
 	}
-
-	return ctx.JSON(convert(cl))
+	return ctx.JSON(convert(cr))
 }
 
 // Delete godoc
