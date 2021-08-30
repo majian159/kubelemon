@@ -8,24 +8,31 @@ import (
 	"time"
 
 	"github.com/ahmetb/go-linq/v3"
-	"github.com/majian159/kubelemon/pkg/domain"
 )
 
-type ListQuery struct {
-	Keywords string             `json:"keywords,omitempty"`
-	SortBy   []domain.SortField `json:"sortBy,omitempty"`
-	Limit    int                `json:"limit,omitempty"`
-	Offset   int                `json:"offset,omitempty"`
+type Field string
+
+type SortField string
+
+func (r SortField) GetColumn() Field {
+	str := string(r)
+	index := strings.Index(str, "|")
+	if index == -1 {
+		return Field(str)
+	}
+	return Field(str[:index])
 }
 
-func (q *ListQuery) CreateQuery() *domain.Query {
-	return &domain.Query{
-		Pagination: &domain.Pagination{
-			Offset: q.Offset,
-			Limit:  q.Limit,
-		},
-		SortBy: q.SortBy,
-	}
+func (r SortField) IsAscending() bool {
+	str := string(r)
+	return strings.Contains(str, "|asc")
+}
+
+type ListQuery struct {
+	Keywords string      `json:"keywords,omitempty"`
+	SortBy   []SortField `json:"sortBy,omitempty"`
+	Limit    int         `json:"limit,omitempty" default:"10"`
+	Offset   int         `json:"offset,omitempty" default:"0"`
 }
 
 type QueryExecutor struct {
@@ -33,7 +40,7 @@ type QueryExecutor struct {
 	source    interface{}
 	limit     int
 	offset    int
-	sortBy    []domain.SortField
+	sortBy    []SortField
 }
 
 func (q *ListQuery) CreateExecutor(source interface{}) *QueryExecutor {
@@ -66,7 +73,7 @@ func (q *QueryExecutor) Filter(predicate func(interface{}) bool) *QueryExecutor 
 	return q
 }
 
-func (q *QueryExecutor) Sorts(sorts []domain.SortField) *QueryExecutor {
+func (q *QueryExecutor) Sorts(sorts []SortField) *QueryExecutor {
 	q.sortBy = sorts
 	return q
 }

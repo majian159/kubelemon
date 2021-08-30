@@ -52,11 +52,13 @@ var doc = `{
                     },
                     {
                         "type": "integer",
+                        "default": 10,
                         "name": "limit",
                         "in": "query"
                     },
                     {
                         "type": "integer",
+                        "default": 0,
                         "name": "offset",
                         "in": "query"
                     },
@@ -73,7 +75,7 @@ var doc = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/handlers.ClusterListResponse"
+                            "$ref": "#/definitions/cluster.ListResponse"
                         }
                     },
                     "404": {
@@ -91,7 +93,7 @@ var doc = `{
                     "default": {
                         "description": "",
                         "schema": {
-                            "$ref": "#/definitions/handlers.ClusterListResponse"
+                            "$ref": "#/definitions/cluster.ListResponse"
                         }
                     }
                 }
@@ -111,12 +113,12 @@ var doc = `{
                         "required": true
                     },
                     {
-                        "description": "Create cluster",
+                        "description": "request",
                         "name": "cluster",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handlers.CreateClusterRequest"
+                            "$ref": "#/definitions/cluster.CreateClusterRequest"
                         }
                     }
                 ],
@@ -148,7 +150,7 @@ var doc = `{
                 }
             }
         },
-        "/namespaces/{namespace}/clusters/{cluster}": {
+        "/namespaces/{namespace}/clusters/{name}": {
             "get": {
                 "tags": [
                     "clusters"
@@ -166,7 +168,7 @@ var doc = `{
                     {
                         "type": "string",
                         "description": "Cluster name",
-                        "name": "cluster",
+                        "name": "name",
                         "in": "path",
                         "required": true
                     }
@@ -215,7 +217,7 @@ var doc = `{
                     {
                         "type": "string",
                         "description": "Cluster name",
-                        "name": "cluster",
+                        "name": "name",
                         "in": "path",
                         "required": true
                     }
@@ -264,17 +266,17 @@ var doc = `{
                     {
                         "type": "string",
                         "description": "Cluster name",
-                        "name": "cluster",
+                        "name": "name",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "Patch cluster",
+                        "description": "request",
                         "name": "cluster",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/handlers.UpdateClusterRequest"
+                            "$ref": "#/definitions/cluster.UpdateClusterRequest"
                         }
                     }
                 ],
@@ -305,16 +307,122 @@ var doc = `{
                     }
                 }
             }
+        },
+        "/namespaces/{namespace}/clusters/{name}/config": {
+            "get": {
+                "tags": [
+                    "clusters"
+                ],
+                "summary": "Get cluster config",
+                "operationId": "getClusterConfig",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Namespace name",
+                        "name": "namespace",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Cluster name",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/cluster.Config"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/cluster.Config"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "clusters"
+                ],
+                "summary": "Put cluster config",
+                "operationId": "putClusterConfig",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Namespace name",
+                        "name": "namespace",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Cluster name",
+                        "name": "name",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "config",
+                        "name": "cluster",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/cluster.Config"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
         "cluster.Cluster": {
             "type": "object",
             "properties": {
-                "config": {
-                    "type": "string"
-                },
-                "createdTime": {
+                "creationTime": {
                     "type": "string"
                 },
                 "description": {
@@ -325,7 +433,26 @@ var doc = `{
                 }
             }
         },
-        "handlers.ClusterListResponse": {
+        "cluster.Config": {
+            "type": "object",
+            "properties": {
+                "config": {
+                    "type": "string"
+                }
+            }
+        },
+        "cluster.CreateClusterRequest": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "cluster.ListResponse": {
             "type": "object",
             "properties": {
                 "items": {
@@ -339,26 +466,9 @@ var doc = `{
                 }
             }
         },
-        "handlers.CreateClusterRequest": {
+        "cluster.UpdateClusterRequest": {
             "type": "object",
             "properties": {
-                "config": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "handlers.UpdateClusterRequest": {
-            "type": "object",
-            "properties": {
-                "config": {
-                    "type": "string"
-                },
                 "description": {
                     "type": "string"
                 }

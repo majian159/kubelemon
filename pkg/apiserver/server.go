@@ -3,7 +3,9 @@ package apiserver
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/majian159/kubelemon/pkg/apiserver/appcontext"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	kerrors "k8s.io/apimachinery/pkg/api/errors"
 )
 
 func NewAPIServerCommand() *cobra.Command {
@@ -33,7 +35,14 @@ func NewAPIServerCommand() *cobra.Command {
 func Run(o *ServerOptions) error {
 	appContext := appcontext.NewAppContext(o.GetKubeClient(), o.GetVelaClient())
 
-	app := fiber.New()
+	app := fiber.New(fiber.Config{ErrorHandler: func(ctx *fiber.Ctx, err error) error {
+		switch errors.Cause(err).(type) {
+		case *kerrors.StatusError:
+			se := err.(*kerrors.StatusError)
+			return ctx.Status(int(se.Status().Code)).SendString(se.Status().Message)
+		}
+		return err
+	}})
 
 	app.Use(func(c *fiber.Ctx) error {
 		appcontext.Set(c, appContext)

@@ -2,16 +2,26 @@ basePath: /api/v1alpha1
 definitions:
   cluster.Cluster:
     properties:
-      config:
-        type: string
-      createdTime:
+      creationTime:
         type: string
       description:
         type: string
       name:
         type: string
     type: object
-  handlers.ClusterListResponse:
+  cluster.Config:
+    properties:
+      config:
+        type: string
+    type: object
+  cluster.CreateClusterRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+    type: object
+  cluster.ListResponse:
     properties:
       items:
         items:
@@ -20,19 +30,8 @@ definitions:
       total:
         type: integer
     type: object
-  handlers.CreateClusterRequest:
+  cluster.UpdateClusterRequest:
     properties:
-      config:
-        type: string
-      description:
-        type: string
-      name:
-        type: string
-    type: object
-  handlers.UpdateClusterRequest:
-    properties:
-      config:
-        type: string
       description:
         type: string
     type: object
@@ -60,10 +59,12 @@ paths:
       - in: query
         name: keywords
         type: string
-      - in: query
+      - default: 10
+        in: query
         name: limit
         type: integer
-      - in: query
+      - default: 0
+        in: query
         name: offset
         type: integer
       - in: query
@@ -75,7 +76,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/handlers.ClusterListResponse'
+            $ref: '#/definitions/cluster.ListResponse'
         "404":
           description: Not Found
           schema:
@@ -87,7 +88,7 @@ paths:
         default:
           description: ""
           schema:
-            $ref: '#/definitions/handlers.ClusterListResponse'
+            $ref: '#/definitions/cluster.ListResponse'
       tags:
       - clusters
     post:
@@ -98,12 +99,12 @@ paths:
         name: namespace
         required: true
         type: string
-      - description: Create cluster
+      - description: request
         in: body
         name: cluster
         required: true
         schema:
-          $ref: '#/definitions/handlers.CreateClusterRequest'
+          $ref: '#/definitions/cluster.CreateClusterRequest'
       responses:
         "200":
           description: OK
@@ -124,7 +125,7 @@ paths:
       summary: Create cluster
       tags:
       - clusters
-  /namespaces/{namespace}/clusters/{cluster}:
+  /namespaces/{namespace}/clusters/{name}:
     delete:
       operationId: deleteCluster
       parameters:
@@ -135,7 +136,7 @@ paths:
         type: string
       - description: Cluster name
         in: path
-        name: cluster
+        name: name
         required: true
         type: string
       responses:
@@ -168,7 +169,7 @@ paths:
         type: string
       - description: Cluster name
         in: path
-        name: cluster
+        name: name
         required: true
         type: string
       responses:
@@ -201,15 +202,15 @@ paths:
         type: string
       - description: Cluster name
         in: path
-        name: cluster
+        name: name
         required: true
         type: string
-      - description: Patch cluster
+      - description: request
         in: body
         name: cluster
         required: true
         schema:
-          $ref: '#/definitions/handlers.UpdateClusterRequest'
+          $ref: '#/definitions/cluster.UpdateClusterRequest'
       responses:
         "200":
           description: OK
@@ -228,6 +229,79 @@ paths:
           schema:
             $ref: '#/definitions/cluster.Cluster'
       summary: Update cluster
+      tags:
+      - clusters
+  /namespaces/{namespace}/clusters/{name}/config:
+    get:
+      operationId: getClusterConfig
+      parameters:
+      - description: Namespace name
+        in: path
+        name: namespace
+        required: true
+        type: string
+      - description: Cluster name
+        in: path
+        name: name
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/cluster.Config'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/cluster.Config'
+      summary: Get cluster config
+      tags:
+      - clusters
+    put:
+      operationId: putClusterConfig
+      parameters:
+      - description: Namespace name
+        in: path
+        name: namespace
+        required: true
+        type: string
+      - description: Cluster name
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: config
+        in: body
+        name: cluster
+        required: true
+        schema:
+          $ref: '#/definitions/cluster.Config'
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+        default:
+          description: ""
+          schema:
+            type: string
+      summary: Put cluster config
       tags:
       - clusters
 swagger: "2.0"
