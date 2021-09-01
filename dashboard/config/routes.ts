@@ -23,7 +23,33 @@
     redirect: '/clusters',
   },
   {
+    name: 'application',
+    path: '/applications',
+    flatMenu: true,
+    routes: [
+      {
+        name: 'list',
+        path: '/applications',
+        icon: 'AppstoreOutlined',
+        component: './Application/List',
+      },
+      {
+        name: 'edit',
+        path: '/applications/:name/edit',
+        hideInMenu: true,
+        component: './Application/Edit',
+      },
+      {
+        name: 'componentEdit',
+        path: '/applications/:appName/components/:name',
+        hideInMenu: true,
+        component: './Application/AppComponents/Edit',
+      },
+    ],
+  },
+  {
     name: 'cluster',
+    path: '/clusters',
     flatMenu: true,
     routes: [
       {
