@@ -4,6 +4,7 @@ import (
 	swagger "github.com/arsmn/fiber-swagger/v2"
 	"github.com/gofiber/fiber/v2"
 	_ "github.com/majian159/kubelemon/docs"
+	"github.com/majian159/kubelemon/pkg/apiserver/handlers/application"
 	"github.com/majian159/kubelemon/pkg/apiserver/handlers/cluster"
 )
 
@@ -30,4 +31,5 @@ func registerRoute(app *fiber.App) {
 	nsGroup := v1Group.Group("/namespaces/:namespace")
 
 	cluster.RegisterRoutes(nsGroup.Group("/clusters"))
+	application.RegisterRoutes(nsGroup.Group("/applications"))
 }

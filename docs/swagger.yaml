@@ -1,5 +1,55 @@
 basePath: /api/v1alpha1
 definitions:
+  application.Application:
+    properties:
+      components:
+        items:
+          $ref: '#/definitions/application.Component'
+        type: array
+      creationTime:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+    type: object
+  application.Component:
+    properties:
+      externalRevision:
+        type: string
+      name:
+        type: string
+      properties:
+        additionalProperties: true
+        type: object
+      scopes:
+        additionalProperties:
+          type: string
+        type: object
+      traits:
+        items:
+          $ref: '#/definitions/application.ComponentTrait'
+        type: array
+      type:
+        type: string
+    type: object
+  application.ComponentTrait:
+    properties:
+      properties:
+        additionalProperties: true
+        type: object
+      type:
+        type: string
+    type: object
+  application.ListResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/application.Application'
+        type: array
+      total:
+        type: integer
+    type: object
   cluster.Cluster:
     properties:
       creationTime:
@@ -47,6 +97,156 @@ info:
   title: KubeLemon API
   version: "1.0"
 paths:
+  /namespaces/{namespace}/applications:
+    get:
+      operationId: listApplications
+      parameters:
+      - description: Namespace name
+        in: path
+        name: namespace
+        required: true
+        type: string
+      - in: query
+        name: keywords
+        type: string
+      - default: 10
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        in: query
+        name: offset
+        type: integer
+      - in: query
+        items:
+          type: string
+        name: sortBy
+        type: array
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/application.ListResponse'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/application.ListResponse'
+      tags:
+      - applications
+  /namespaces/{namespace}/applications/{name}:
+    delete:
+      operationId: deleteApplication
+      parameters:
+      - description: Namespace name
+        in: path
+        name: namespace
+        required: true
+        type: string
+      - description: Application name
+        in: path
+        name: name
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Delete an application
+      tags:
+      - applications
+    get:
+      operationId: getApplication
+      parameters:
+      - description: Namespace name
+        in: path
+        name: namespace
+        required: true
+        type: string
+      - description: Application name
+        in: path
+        name: name
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/application.Application'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/application.Application'
+      summary: Get application
+      tags:
+      - applications
+    patch:
+      operationId: patchApplication
+      parameters:
+      - description: Namespace name
+        in: path
+        name: namespace
+        required: true
+        type: string
+      - description: Application name
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: request
+        in: body
+        name: cluster
+        required: true
+        schema:
+          $ref: '#/definitions/application.Application'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/application.Application'
+        "404":
+          description: Not Found
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/application.Application'
+      summary: Update application
+      tags:
+      - applications
   /namespaces/{namespace}/clusters:
     get:
       operationId: listClusters

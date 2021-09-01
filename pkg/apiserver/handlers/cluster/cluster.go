@@ -101,7 +101,7 @@ func List(ctx *fiber.Ctx) error {
 		return err
 	}
 
-	var result []*Cluster
+	var items []*Cluster
 	linq.From(list.Items).
 		Where(func(i interface{}) bool {
 			return i.(v1beta1.Cluster).DeletionTimestamp == nil
@@ -109,9 +109,10 @@ func List(ctx *fiber.Ctx) error {
 		Select(func(i interface{}) interface{} {
 			cl := i.(v1beta1.Cluster)
 			return convert(&cl)
-		}).ToSlice(&result)
+		}).ToSlice(&items)
 
-	total, err := q.CreateFilterExecutor(result,
+	var result []*Cluster
+	total, err := q.CreateFilterExecutor(items,
 		func(keywords string, i interface{}) bool {
 			cl := i.(*Cluster)
 			keywords = strings.ToLower(keywords)
