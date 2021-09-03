@@ -9,6 +9,39 @@ export type ApplicationModel = Omit<API.Application, 'components'> & {
   components: ComponentModel[];
 };
 
+export function reverseTrait(trait: ComponentTraitModel): API.ComponentTrait {
+  const t: any = { ...trait };
+  delete t.component;
+  return t;
+}
+
+export function reverseComponent(component: ComponentModel): API.Component {
+  const c: any = { ...component };
+
+  delete c.application;
+
+  if (c.traits?.length === 0) {
+    c.traits = undefined;
+  } else {
+    c.traits = c.traits?.map(reverseTrait);
+  }
+  return c;
+}
+
+export function reverseApplication(app: ApplicationModel): API.Application {
+  const local: Partial<
+    Omit<ApplicationModel, 'components'> & {
+      components: Partial<
+        Omit<ComponentModel, 'traits'> & { traits: Partial<ComponentTraitModel>[] }
+      >[];
+    }
+  > = { ...app };
+
+  local.components = local.components?.map((c: any) => reverseComponent(c));
+
+  return local;
+}
+
 export function convertApplications(applications: API.Application[]): ApplicationModel[] {
   return applications.map(convertApplication);
 }

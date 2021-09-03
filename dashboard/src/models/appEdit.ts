@@ -1,46 +1,20 @@
 import { useCallback, useState } from 'react';
 
-import { convertApplication } from '@/pages/application/types';
+import { convertApplication, reverseApplication } from '@/pages/application/types';
 import {
   getApplication,
   patchApplication,
   postApplication,
 } from '@/services/kubelemon/applications';
 
-import type {
-  ApplicationModel,
-  ComponentModel,
-  ComponentTraitModel,
-} from '@/pages/application/types';
+import type { ApplicationModel } from '@/pages/application/types';
 
-function reverseApplication(app: ApplicationModel): API.Application {
-  const local: Partial<
-    Omit<ApplicationModel, 'components'> & {
-      components: Partial<
-        Omit<ComponentModel, 'traits'> & { traits: Partial<ComponentTraitModel>[] }
-      >[];
-    } & Pick<ApplicationModelType, 'isCreate' | 'namespace'>
-  > = { ...app };
+function reverseApplicationEditModel(app: ApplicationModel): API.Application {
+  const local: API.Application & Partial<Pick<ApplicationModelType, 'isCreate' | 'namespace'>> =
+    reverseApplication(app);
 
   delete local.namespace;
   delete local.isCreate;
-
-  local.components = local.components?.map((com) => {
-    const c = { ...com };
-
-    delete c.application;
-
-    if (c.traits?.length === 0) {
-      c.traits = undefined;
-    } else {
-      c.traits = c.traits?.map((trait) => {
-        const t = { ...trait };
-        delete t.component;
-        return t;
-      });
-    }
-    return c;
-  });
 
   return local;
 }
@@ -75,7 +49,7 @@ export default () => {
       return null;
     }
 
-    const localApp = reverseApplication(app);
+    const localApp = reverseApplicationEditModel(app);
     let result: API.Application;
     if (app.isCreate) {
       result = await postApplication({ namespace: app.namespace }, localApp);

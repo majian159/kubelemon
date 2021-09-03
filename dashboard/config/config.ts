@@ -5,6 +5,7 @@ import { defineConfig } from 'umi';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
 import routes from './routes';
+import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
 
 const { REACT_APP_ENV } = process.env;
 
@@ -59,4 +60,11 @@ export default defineConfig({
   //mfsu: {},
   webpack5: {},
   exportStatic: {},
+  chainWebpack: (memo) => {
+    memo.plugin('monaco-editor').use(MonacoWebpackPlugin, [
+      {
+        languages: ['yaml', 'json'],
+      },
+    ]);
+  },
 });

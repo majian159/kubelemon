@@ -2,6 +2,7 @@ import { Ingress } from './';
 
 import type { FormPartProps } from '@/components/FormPart';
 import type { ComponentTraitModel } from '@/pages/application/types';
+import Editor from './Editor';
 
 const Trait: React.FC<FormPartProps<ComponentTraitModel>> = (props) => {
   const { values } = props;
@@ -13,7 +14,7 @@ const Trait: React.FC<FormPartProps<ComponentTraitModel>> = (props) => {
     case 'ingress':
       return <Ingress {...props} />;
     default:
-      throw new Error('not support');
+      return <Editor {...props} />;
   }
 };
 

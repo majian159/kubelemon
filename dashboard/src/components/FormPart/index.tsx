@@ -16,7 +16,7 @@ export type FormPartProps<T> = {
   onChange?: (values: T) => void;
 };
 
-export function useFormPart<T>(): [FormPartInstance<T>] {
+export function createFormPart<T>(): FormPartInstance<T> {
   const instance: FormPartInstance<T> = {
     getValues: () => {
       return undefined;
@@ -26,7 +26,11 @@ export function useFormPart<T>(): [FormPartInstance<T>] {
       return { errors: [] };
     },
   };
-  return [instance];
+  return instance;
+}
+
+export function useFormPart<T>(): [FormPartInstance<T>] {
+  return [createFormPart()];
 }
 
 export function formPartFromAntd<T>(

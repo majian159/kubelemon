@@ -1,11 +1,19 @@
-import { Button, Drawer, message } from 'antd';
+import { Button, message } from 'antd';
+import { useState } from 'react';
+import YAML from 'yaml';
 
+import CodeEditor from '@/components/CodeEditor';
 import { useFormPart } from '@/components/FormPart';
 
 import ComponentEdit from '../../AppComponents/components/ComponentEdit';
+import { reverseComponent } from '@/pages/application/types';
 
 import type { ValidatesResult } from '@/components/FormPart';
-import type { ComponentModel } from '../../types';
+import type { ComponentModel } from '@/pages/application/types';
+import { useEffect } from 'react';
+import ProDrawer from '@/components/ProDrawer';
+
+type EditMode = 'form' | 'editor';
 
 const ComponentEditDrawer: React.FC<{
   component?: ComponentModel;
@@ -25,21 +33,48 @@ const ComponentEditDrawer: React.FC<{
     }
   };
 
+  const [mode, setMode] = useState<EditMode>('form');
+  const isForm = mode === 'form';
+
+  const [codeValue, setCodeValue] = useState<string>();
+  useEffect(() => {
+    if (mode === 'editor') {
+      setCodeValue(component == null ? '' : YAML.stringify(reverseComponent(component)));
+    }
+  }, [component, mode]);
+
   return (
-    <Drawer
+    <ProDrawer
       title={`Edit ${component?.name} component`}
+      extra={
+        <a
+          onClick={() => {
+            setMode(isForm ? 'editor' : 'form');
+            if (isForm) {
+              setCodeValue(YAML.stringify(reverseComponent(instance.getValues()!)));
+            } else {
+              instance.setValues(YAML.parse(codeValue ?? ''));
+            }
+          }}
+        >
+          {isForm ? 'Switch to editor' : 'Switch to form'}
+        </a>
+      }
       visible={component !== undefined}
       onClose={() => save()}
-      width="60%"
+      width="80%"
       footer={
         <div style={{ textAlign: 'right' }}>
           <Button
             type="primary"
-            onClick={() =>
+            onClick={() => {
+              if (!isForm) {
+                instance.setValues(YAML.parse(codeValue ?? ''));
+              }
               save({
                 error: () => message.error('Verification failed, please check!'),
-              })
-            }
+              });
+            }}
           >
             Save
           </Button>
@@ -47,9 +82,22 @@ const ComponentEditDrawer: React.FC<{
       }
     >
       {component == null ? null : (
-        <ComponentEdit instance={instance} values={component} onChange={() => {}} />
+        <>
+          <div style={{ display: isForm ? 'block' : 'none' }}>
+            <ComponentEdit instance={instance} values={component} onChange={() => {}} />
+          </div>
+          {isForm ? null : (
+            <CodeEditor
+              language="yaml"
+              value={codeValue}
+              onChange={(v) => {
+                setCodeValue(v);
+              }}
+            />
+          )}
+        </>
       )}
-    </Drawer>
+    </ProDrawer>
   );
 };
 
