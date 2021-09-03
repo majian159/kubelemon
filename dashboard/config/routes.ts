@@ -20,7 +20,7 @@
   },
   {
     path: '/',
-    redirect: '/clusters',
+    redirect: '/applications',
   },
   {
     name: 'application',
@@ -32,12 +32,6 @@
         path: '/applications',
         icon: 'AppstoreOutlined',
         component: './Application/List',
-      },
-      {
-        name: 'edit',
-        path: '/applications/:name/edit',
-        hideInMenu: true,
-        component: './Application/Edit',
       },
       {
         name: 'componentEdit',

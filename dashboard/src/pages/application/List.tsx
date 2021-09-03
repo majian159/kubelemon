@@ -1,12 +1,11 @@
-import { Card, message, Popconfirm, Space } from 'antd';
-import { useRef, useState } from 'react';
+import { message, Popconfirm, Space } from 'antd';
+import { useRef } from 'react';
 import { FormattedMessage } from 'umi';
 
 import { deleteApplication, listApplications } from '@/services/kubelemon/applications';
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
 
-import Component from './components/Component';
 import ComponentList from './components/ComponentList';
 import { convertApplications } from './types';
 
@@ -16,7 +15,6 @@ import type { ActionType } from '@ant-design/pro-table';
 const Table: React.FC = () => {
   const namespace = 'default';
   const actionRef = useRef<ActionType>();
-  const [application, setApplication] = useState<ApplicationModel | null>();
 
   return (
     <>
@@ -59,9 +57,6 @@ const Table: React.FC = () => {
             width: 180,
             valueType: 'option',
             render: (_, record) => [
-              <a key="edit" onClick={() => {}}>
-                Edit
-              </a>,
               <Popconfirm
                 key="delete"
                 title="Are you sure to delete this application?"
@@ -88,7 +83,7 @@ const Table: React.FC = () => {
               return `${item[0]}|${item[1]}`;
             }),
           });
-          setApplication(convertApplications(resp.items ?? [])[0]);
+
           return {
             data: convertApplications(resp.items ?? []),
             total: resp.total,
@@ -104,9 +99,6 @@ const Table: React.FC = () => {
         }}
         expandedRowRender={({ components }) => <ComponentList components={components ?? []} />}
       />
-      <Card title="Component">
-        {application == null ? null : <Component component={application?.components[0]} />}
-      </Card>
     </>
   );
 };

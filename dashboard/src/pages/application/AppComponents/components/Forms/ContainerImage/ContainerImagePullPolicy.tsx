@@ -4,7 +4,7 @@ const ContainerImagePullPolicy: React.FC = () => {
   return (
     <ProFormRadio.Group
       name="imagePullPolicy"
-      label="ImagePullPolicy"
+      label="Pull Image"
       options={[
         {
           label: 'IfNotPresent',

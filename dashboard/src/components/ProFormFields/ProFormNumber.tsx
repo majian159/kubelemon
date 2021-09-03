@@ -5,20 +5,10 @@ export type ProFormNumberProps = typeof ProFormText.defaultProps & {
   max?: number;
 };
 
-const ProFormNumber: React.FC<ProFormNumberProps> = ({
-  name,
-  label,
-  required,
-  fieldProps,
-  min,
-  max,
-}) => {
+const ProFormNumber: React.FC<ProFormNumberProps> = (props) => {
+  const { required, min, max } = props;
   return (
     <ProFormText
-      name={name}
-      label={label}
-      required={required}
-      fieldProps={fieldProps}
       rules={[
         { required },
         {
@@ -38,7 +28,9 @@ const ProFormNumber: React.FC<ProFormNumberProps> = ({
         }
         return n;
       }}
+      {...props}
     />
   );
 };
+
 export default ProFormNumber;
