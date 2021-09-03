@@ -37,7 +37,7 @@ const Traits: React.FC<FormPartProps<ComponentModel>> = (props) => {
       );
     };
     instance.setValues = (vs) => {
-      vs?.traits.forEach((t) => {
+      vs?.traits?.forEach((t) => {
         instances[t.type!].setValues(t);
       });
     };

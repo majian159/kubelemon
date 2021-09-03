@@ -38,10 +38,10 @@ const ComponentEditDrawer: React.FC<{
 
   const [codeValue, setCodeValue] = useState<string>();
   useEffect(() => {
-    if (mode === 'editor') {
+    if (mode === 'editor' && codeValue === undefined) {
       setCodeValue(component == null ? '' : YAML.stringify(reverseComponent(component)));
     }
-  }, [component, mode]);
+  }, [component, mode, codeValue]);
 
   return (
     <ProDrawer

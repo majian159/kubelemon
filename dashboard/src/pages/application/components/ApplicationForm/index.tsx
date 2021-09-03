@@ -131,7 +131,7 @@ const ApplicationForm: React.FC<{
       </ProCard>
       <ProCard title="Add components" style={{ marginTop: '20px' }} headerBordered wrap>
         <ProCard
-          colSpan={4}
+          colSpan={{ xs: 24, sm: 10, lg: 6, xxl: 4 }}
           bordered
           hoverable
           onClick={() => {
