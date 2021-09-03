@@ -34,6 +34,12 @@
         component: './Application/List',
       },
       {
+        name: 'create',
+        path: '/applications/create',
+        component: './Application/Create',
+        hideInMenu: true,
+      },
+      {
         name: 'edit',
         path: '/applications/:name',
         component: './Application/Edit',

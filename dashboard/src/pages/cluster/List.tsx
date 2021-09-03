@@ -3,7 +3,11 @@ import { useRef, useState } from 'react';
 import { FormattedMessage } from 'umi';
 
 import {
-    deleteCluster, listClusters, patchCluster, postCluster, putClusterConfig
+  deleteCluster,
+  listClusters,
+  patchCluster,
+  postCluster,
+  putClusterConfig,
 } from '@/services/kubelemon/clusters';
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';

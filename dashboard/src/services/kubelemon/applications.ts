@@ -29,6 +29,28 @@ export async function listApplications(
   });
 }
 
+/** Create application POST /namespaces/${param0}/applications */
+export async function postApplication(
+  params: {
+    // path
+    /** Namespace name */
+    namespace: string;
+  },
+  body: API.Application,
+  options?: { [key: string]: any },
+) {
+  const { namespace: param0, ...queryParams } = params;
+  return request<API.Application>(`/namespaces/${param0}/applications`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    params: { ...queryParams },
+    data: body,
+    ...(options || {}),
+  });
+}
+
 /** Get application GET /namespaces/${param0}/applications/${param1} */
 export async function getApplication(
   params: {

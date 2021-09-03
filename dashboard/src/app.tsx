@@ -1,11 +1,14 @@
 import type { Settings as LayoutSettings } from '@ant-design/pro-layout';
-import { PageLoading } from '@ant-design/pro-layout';
-import type { RequestConfig, RunTimeLayoutConfig } from 'umi';
 import { history, Link } from 'umi';
-import RightContent from '@/components/RightContent';
+
 import Footer from '@/components/Footer';
-import { currentUser as queryCurrentUser } from './services/ant-design-pro/api';
+import RightContent from '@/components/RightContent';
 import { BookOutlined, LinkOutlined } from '@ant-design/icons';
+import { PageLoading } from '@ant-design/pro-layout';
+
+import { currentUser as queryCurrentUser } from './services/ant-design-pro/api';
+
+import type { RequestConfig, RunTimeLayoutConfig } from 'umi';
 
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
@@ -80,4 +83,19 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
 
 export const request: RequestConfig = {
   prefix: '/api/v1alpha1',
+  errorConfig: {
+    adaptor: (data, ctx) => {
+      const { res } = ctx;
+
+      if (res === '') {
+        return { success: true };
+      }
+      const { status }: Response = res;
+
+      if (typeof data === 'string') {
+        return { success: status < 400, errorMessage: data ?? '' };
+      }
+      return data;
+    },
+  },
 };

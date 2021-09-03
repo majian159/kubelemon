@@ -1,9 +1,10 @@
-import { message, Popconfirm, Space } from 'antd';
+import { Button, message, Popconfirm, Space } from 'antd';
 import { useRef } from 'react';
 import { FormattedMessage, Link } from 'umi';
 
 import { convertApplications } from '@/pages/application/types';
 import { deleteApplication, listApplications } from '@/services/kubelemon/applications';
+import { PlusOutlined } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
 
@@ -21,6 +22,13 @@ const Table: React.FC = () => {
       <ProTable<ApplicationModel>
         headerTitle={<FormattedMessage id="menu.application.list" defaultMessage="Applications" />}
         actionRef={actionRef}
+        toolBarRender={() => [
+          <Link to="./applications/create">
+            <Button icon={<PlusOutlined />} type="primary">
+              Create
+            </Button>
+          </Link>,
+        ]}
         rowSelection={{ alwaysShowAlert: true }}
         tableAlertOptionRender={({ selectedRowKeys, onCleanSelected }) => {
           return selectedRowKeys?.length === 0 ? null : (
