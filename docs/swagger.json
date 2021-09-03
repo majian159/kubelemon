@@ -82,6 +82,57 @@
                         }
                     }
                 }
+            },
+            "post": {
+                "tags": [
+                    "applications"
+                ],
+                "summary": "Create application",
+                "operationId": "postApplication",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Namespace name",
+                        "name": "namespace",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "request",
+                        "name": "cluster",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/application.Application"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/application.Application"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/application.Application"
+                        }
+                    }
+                }
             }
         },
         "/namespaces/{namespace}/applications/{name}": {

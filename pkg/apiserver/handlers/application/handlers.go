@@ -19,6 +19,7 @@ import (
 func RegisterRoutes(r fiber.Router) {
 	r.Get("/", List)
 	r.Get("/:name", Get)
+	r.Post("/", Create)
 	r.Patch("/:name", Update)
 	r.Delete("/:name", Delete)
 }
@@ -96,6 +97,38 @@ func Get(ctx *fiber.Ctx) error {
 	return ctx.JSON(convertApplication(application))
 }
 
+// Create
+// @Summary Create application
+// @Tags applications
+// @ID postApplication
+// @Param namespace path string true "Namespace name"
+// @Param cluster body Application true "request"
+// @Success 200 {object} Application
+// @Failure 404 {object} string
+// @Failure 500 {object} string
+// @Response default {object} Application
+// @Router /namespaces/{namespace}/applications [post]
+func Create(ctx *fiber.Ctx) error {
+	namespace := ctx.Params("namespace")
+
+	app := new(Application)
+	if err := ctx.BodyParser(&app); err != nil {
+		return err
+	}
+
+	applications := appcontext.Get(ctx).GetVelaClient().CoreV1beta1().Applications(namespace)
+
+	application := &v1beta1.Application{}
+	fillApplication(app, application)
+
+	application, err := applications.Create(context.Background(), application, metav1.CreateOptions{})
+	if err != nil {
+		return err
+	}
+
+	return ctx.JSON(convertApplication(application))
+}
+
 // Update
 // @Summary Update application
 // @Tags applications
@@ -160,6 +193,7 @@ func fillApplication(app *Application, application *v1beta1.Application) {
 	}
 
 	application.Annotations[atypes.DescriptionField] = app.Description
+	application.Name = app.Name
 
 	appComponents := make([]common.ApplicationComponent, 0, len(app.Components))
 	for _, component := range app.Components {
