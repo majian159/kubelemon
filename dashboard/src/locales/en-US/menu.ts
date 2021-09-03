@@ -4,4 +4,6 @@ export default {
   'menu.cluster.list': 'Clusters',
   'menu.application': 'Application',
   'menu.application.list': 'Applications',
+  'menu.application.create': 'Create Application',
+  'menu.application.edit': 'Edit Application',
 };

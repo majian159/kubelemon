@@ -51,7 +51,14 @@ const Table: React.FC = () => {
           );
         }}
         columns={[
-          { title: 'Name', dataIndex: 'name', sorter: true },
+          {
+            title: 'Name',
+            dataIndex: 'name',
+            sorter: true,
+            render: (v) => {
+              return <Link to={`./applications/${v}`}>{v}</Link>;
+            },
+          },
           { title: 'Description', dataIndex: 'description', search: false },
           {
             title: 'Created',
@@ -65,7 +72,9 @@ const Table: React.FC = () => {
             width: 180,
             valueType: 'option',
             render: (_, record) => [
-              <Link to={`./applications/${record.name}`}>Edit</Link>,
+              <Link key="edit" to={`./applications/${record.name}`}>
+                Edit
+              </Link>,
               <Popconfirm
                 key="delete"
                 title="Are you sure to delete this application?"

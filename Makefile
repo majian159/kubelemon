@@ -13,3 +13,9 @@ swagger-gen:
 
 air:
 	$(GOBIN)/air -c .air.linux.conf
+
+run-apiserver:
+	go run cmd/apiserver/main.go
+
+run-dashboard:
+	cd dashboard && yarn && yarn start

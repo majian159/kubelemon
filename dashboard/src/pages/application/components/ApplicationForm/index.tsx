@@ -65,6 +65,7 @@ const ApplicationForm: React.FC<{
         ) : (
           app?.components.map((c) => (
             <ProCard
+              key={c.name}
               {...componentCardProps}
               onClick={() => setEditComponent(c)}
               style={{ maxWidth: 300 }}
