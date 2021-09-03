@@ -1,15 +1,15 @@
 import { message, Popconfirm, Space } from 'antd';
 import { useRef } from 'react';
-import { FormattedMessage } from 'umi';
+import { FormattedMessage, Link } from 'umi';
 
+import { convertApplications } from '@/pages/application/types';
 import { deleteApplication, listApplications } from '@/services/kubelemon/applications';
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
 
 import ComponentList from './components/ComponentList';
-import { convertApplications } from './types';
 
-import type { ApplicationModel } from './types';
+import type { ApplicationModel } from '@/pages/application/types';
 import type { ActionType } from '@ant-design/pro-table';
 
 const Table: React.FC = () => {
@@ -57,6 +57,7 @@ const Table: React.FC = () => {
             width: 180,
             valueType: 'option',
             render: (_, record) => [
+              <Link to={`./applications/${record.name}`}>Edit</Link>,
               <Popconfirm
                 key="delete"
                 title="Are you sure to delete this application?"

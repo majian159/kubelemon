@@ -80,7 +80,6 @@ const BaseForm: React.FC<FormPartProps<ComponentBaseProperties> & { component: C
       }}
     >
       <FormContainer instance={instance} title="Basic">
-        <TaskComponent />
         <TypeComponent component={component} />
         <ContainerImage />
         <Command name="cmd" />

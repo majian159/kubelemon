@@ -34,10 +34,10 @@
         component: './Application/List',
       },
       {
-        name: 'componentEdit',
-        path: '/applications/:appName/components/:name',
+        name: 'edit',
+        path: '/applications/:name',
+        component: './Application/Edit',
         hideInMenu: true,
-        component: './Application/AppComponents/Edit',
       },
     ],
   },

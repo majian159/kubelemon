@@ -1,6 +1,6 @@
 export type ComponentTraitModel = API.ComponentTrait & { component: ComponentModel }
 
-export type ComponentModel = Omit<API.Component, "traits"> & { application: API.Application, traits: ComponentTraitModel[] }
+export type ComponentModel = Omit<API.Component, "traits"> & { application: ApplicationModel, traits: ComponentTraitModel[] }
 
 export type ApplicationModel = Omit<API.Application, "components"> & { components: ComponentModel[] }
 
