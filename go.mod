@@ -6,7 +6,6 @@ require (
 	github.com/ahmetb/go-linq/v3 v3.2.0
 	github.com/arsmn/fiber-swagger/v2 v2.17.0
 	github.com/gofiber/fiber/v2 v2.17.0
-	github.com/majian159/kubevela-client v1.1.0-2
 	github.com/oam-dev/kubevela-core-api v1.1.0
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.2.1
@@ -63,3 +62,5 @@ require (
 	sigs.k8s.io/structured-merge-diff/v4 v4.1.2 // indirect
 	sigs.k8s.io/yaml v1.2.0 // indirect
 )
+
+replace github.com/oam-dev/kubevela-core-api => github.com/majian159/kubevela-core-api v1.1.0-1

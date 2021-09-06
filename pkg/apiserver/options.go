@@ -1,10 +1,10 @@
 package apiserver
 
 import (
+	"github.com/oam-dev/kubevela-core-api/pkg/generated/client/clientset/versioned"
 	"os"
 	"path/filepath"
 
-	"github.com/majian159/kubevela-client/pkg/client/versioned"
 	"k8s.io/client-go/kubernetes"
 
 	"k8s.io/client-go/rest"

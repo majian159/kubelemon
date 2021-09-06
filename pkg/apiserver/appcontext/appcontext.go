@@ -1,7 +1,7 @@
 package appcontext
 
 import (
-	"github.com/majian159/kubevela-client/pkg/client/versioned"
+	"github.com/oam-dev/kubevela-core-api/pkg/generated/client/clientset/versioned"
 	"k8s.io/client-go/kubernetes"
 )
 
